@@ -35,6 +35,7 @@ class RoCCCommand(implicit p: Parameters) extends CoreBundle()(p) {
   val inst = new RoCCInstruction
   val rs1 = Bits(width = xLen)
   val rs2 = Bits(width = xLen)
+  val status = new MStatus
 }
 
 class RoCCResponse(implicit p: Parameters) extends CoreBundle()(p) {
@@ -47,7 +48,6 @@ class RoCCInterface(implicit p: Parameters) extends CoreBundle()(p) {
   val resp = Decoupled(new RoCCResponse)
   val mem = new HellaCacheIO()(p.alterPartial({ case CacheName => "L1D" }))
   val busy = Bool(OUTPUT)
-  val status = new MStatus().asInput
   val interrupt = Bool(OUTPUT)
   
   // These should be handled differently, eventually
