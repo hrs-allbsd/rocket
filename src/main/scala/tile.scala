@@ -18,8 +18,8 @@ case class RoccParameters(
   csrs: Seq[Int] = Nil,
   useFPU: Boolean = false)
 
-abstract class Tile(resetSignal: Bool = null)
-                   (implicit p: Parameters) extends Module(_reset = resetSignal) {
+abstract class Tile(clockSignal: Clock = null, resetSignal: Bool = null)
+    (implicit p: Parameters) extends Module(Option(clockSignal), Option(resetSignal)) {
   val buildRocc = p(BuildRoCC)
   val usingRocc = !buildRocc.isEmpty
   val nRocc = buildRocc.size
@@ -35,7 +35,8 @@ abstract class Tile(resetSignal: Bool = null)
   }
 }
 
-class RocketTile(resetSignal: Bool = null)(implicit p: Parameters) extends Tile(resetSignal)(p) {
+class RocketTile(clockSignal: Clock = null, resetSignal: Bool = null)
+    (implicit p: Parameters) extends Tile(clockSignal, resetSignal)(p) {
   val core = Module(new Rocket()(p.alterPartial({ case CoreName => "Rocket" })))
   val icache = Module(new Frontend()(p.alterPartial({
     case CacheName => "L1I"
